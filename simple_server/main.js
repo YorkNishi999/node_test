@@ -41,6 +41,7 @@
 const express = require("express")
 const path = require("path")
 const multer = require("multer")
+const { PROXY_AUTHENTICATION_REQUIRED } = require("http-status-codes")
 const app = express()
 	
 // View Engine Setup
@@ -49,6 +50,8 @@ app.set("view engine","ejs")
 	
 // If you do not want to use diskStorage then uncomment it
 // var upload = multer({ dest: "Upload_folder_name" })
+
+var dataFileName;
 	
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -57,7 +60,8 @@ var storage = multer.diskStorage({
 		cb(null, "uploads")
 	},
 	filename: function (req, file, cb) {
-	cb(null, file.fieldname + "-" + Date.now()+".jpg")
+		dataFileName = file.fieldname + "-" + Date.now()+".csv"
+		cb(null, dataFileName)
 	}
 })
 	
@@ -92,11 +96,10 @@ app.get("/",function(req,res){
 	res.render("uploadcomp");
 })
 	
-app.post("/uploadCsv",function (req, res, next) {
-		
+app.post("/uploadCsv", (req, res, next) => {
 	// Error MiddleWare for multer file upload, so if any
 	// error occurs, the image would not be uploaded!
-	upload(req,res,function(err) {
+	upload(req,res,(err) => {
 
 		if(err) {
 
@@ -107,11 +110,29 @@ app.post("/uploadCsv",function (req, res, next) {
 		}
 		else {
 			// SUCCESS, image successfully uploaded
-			res.send("Success, CSV uploaded!")
-			// バックは、"/"に戻る。その後モーダルが出てきて、Inference終了までそのまま待つ。モーダルからDLできるようにする。
-			// モーダルを消すと、Inferenceはダウンロードできない。
+			// res.send("Success, CSV uploaded!")
+			res.render("waitInference");
+			console.log(dataFileName);
+			// run node python.js
+			var exec = require('child_process').exec;
+			var child;
+			child = exec('node python.js', (error, stdout, stderr) => {
+				if (error) {
+					console.log(`exec error: ${error}`);
+				}
+				// console.log(`stdout: ${stdout}`);
+				// console.log(`stderr: ${stderr}`);
+			});
 		}
 	})
+})
+
+app.get("/weitInference", (req, res) => {
+	console.log(dataFileName)
+	// inferenceを開始する。Inference終了までそのまま待つ。モーダルからDLできるようにする。
+	// モーダルを消すと、Inferenceはダウンロードできない。
+	// python.js をrun
+	
 })
 	
 // Take any port number of your choice which
