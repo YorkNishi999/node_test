@@ -6,8 +6,6 @@ child = exec(String("python ./python_model/main.py ") + fileName, (error, stdout
   if (error) {
     console.log(`exec error: ${error}`);
   }
-  console.log(`stdout: ${stdout}`);
-  console.log(`stderr: ${stderr}`);
+  // console.log(`stdout: ${stdout}`);
+  // console.log(`stderr: ${stderr}`);
 });
-
-console.log(child)
