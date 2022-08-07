@@ -1,7 +1,8 @@
 var exec = require('child_process').exec;
 var child;
+var fileName = process.argv[2];
 
-child = exec('python ./python_model/main.py ./python_model/data/interim/inference_data.csv', (error, stdout, stderr) => {
+child = exec(String("python ./python_model/main.py ") + fileName, (error, stdout, stderr) => {
   if (error) {
     console.log(`exec error: ${error}`);
   }
@@ -9,4 +10,4 @@ child = exec('python ./python_model/main.py ./python_model/data/interim/inferenc
   console.log(`stderr: ${stderr}`);
 });
 
-
+console.log(child)

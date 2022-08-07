@@ -43,6 +43,9 @@ const path = require("path")
 const multer = require("multer")
 const { PROXY_AUTHENTICATION_REQUIRED } = require("http-status-codes")
 const app = express()
+const ejs = require('ejs');
+const http = require('http');
+const fs = require('fs');
 	
 // View Engine Setup
 app.set("views",path.join(__dirname,"views"))
@@ -111,29 +114,36 @@ app.post("/uploadCsv", (req, res, next) => {
 		else {
 			// SUCCESS, image successfully uploaded
 			// res.send("Success, CSV uploaded!")
-			res.render("waitInference");
+			// res.render("waitInference");
 			console.log(dataFileName);
+
+			dataFileName = String("./uploads/") + dataFileName;
 			// run node python.js
-			var exec = require('child_process').exec;
-			var child;
-			child = exec('node python.js', (error, stdout, stderr) => {
+			var execSync = require('child_process').execSync;
+			execSync(String("node python.js ") + dataFileName, (error, stdout, stderr) => {
 				if (error) {
 					console.log(`exec error: ${error}`);
 				}
 				// console.log(`stdout: ${stdout}`);
 				// console.log(`stderr: ${stderr}`);
 			});
+			console.log("にゃあ");
+			var file = __dirname + "/output.csv";
+			res.download(file);
 		}
 	})
 })
 
-app.get("/weitInference", (req, res) => {
+app.get("/waitInference", (req, res) => {
 	console.log(dataFileName)
-	// inferenceを開始する。Inference終了までそのまま待つ。モーダルからDLできるようにする。
-	// モーダルを消すと、Inferenceはダウンロードできない。
-	// python.js をrun
-	
 })
+
+app.get("/download", (req, res) => {
+	res.render("download");
+})
+
+					
+
 	
 // Take any port number of your choice which
 // is not taken by any other process
