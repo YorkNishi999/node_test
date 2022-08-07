@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  
+<head>
+    <title>FILE UPLOAD</title>
+</head>
+  
+<body>
+    <h1>Single File Upload</h1>
+   
+    <form action="/uploadCsv" 
+      enctype="multipart/form-data" method="POST">
+      
+        <span>Upload CSV data:</span>  
+        <input type="file" name="myinference" accept=".csv" required/> <br>
+        <input type="submit" value="submit"> 
+    </form>
+</body>
+  
+</html>
