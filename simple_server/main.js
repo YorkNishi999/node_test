@@ -77,7 +77,7 @@ app.post("/uploadCsv", (req, res, next) => {
 				// console.log(`stdout: ${stdout}`);
 				// console.log(`stderr: ${stderr}`);
 			});
-			var outputFileName = __dirname + "/output" + "_" + fileTime + ".csv";
+			var outputFileName = __dirname + "/downloads/output" + "_" + fileTime + ".csv";
 			// res.render("download");
 			res.download(outputFileName);
 		}
