@@ -150,8 +150,9 @@ You have no unread notifications
 # python model
 python_model/
 
-# uplpad
+# uplpad/download
 uploads/
+downloads/
 
 # files
 *.csv

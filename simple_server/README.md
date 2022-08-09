@@ -1,0 +1,1 @@
+1. activate conda `conda activate bert-sentiment`
