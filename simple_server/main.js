@@ -6,6 +6,8 @@ const ejs = require('ejs');
 const http = require('http');
 const fs = require('fs');
 const app = express()
+var execSync = require('child_process').execSync;
+
 
 // Define the maximum size for uploading
 // picture i.e. 1 MB. it is optional
@@ -18,6 +20,7 @@ app.set("view engine","ejs")
 // global variables
 var dataFileName;  // name of the file to be uploaded
 var fileTime;
+var outputFileName; // file path for downloading the inference result
 
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -49,7 +52,6 @@ var upload = multer({
 		cb("Error: File upload only supports the "
 				+ "following filetypes - " + filetypes);
 	}
-
 // myinference is the name of file attribute in html form
 }).single("myinference");	
 
@@ -57,19 +59,16 @@ app.get("/",function(req,res){
 	res.render("uploadcomp");
 })
 
-// API to upload the file
+// API to upload the file and inference
 app.post("/uploadCsv", (req, res, next) => {
 	upload(req,res,(err) => {
-
 		if(err) {
 			res.send(err)
 		}
 		else {
 			console.log(dataFileName);
 			dataFileName = String("./uploads/") + dataFileName;
-
 			// run node python.js
-			var execSync = require('child_process').execSync;
 			execSync(String("node python.js ") + dataFileName, (error, stdout, stderr) => {
 				if (error) {
 					console.log(`exec error: ${error}`);
@@ -77,24 +76,28 @@ app.post("/uploadCsv", (req, res, next) => {
 				// console.log(`stdout: ${stdout}`);
 				// console.log(`stderr: ${stderr}`);
 			});
-			var outputFileName = __dirname + "/downloads/output" + "_" + fileTime + ".csv";
-			// res.render("download");
-			res.download(outputFileName);
+			outputFileName = __dirname + "/downloads/output" + "_" + fileTime + ".csv";
+			res.redirect("/download");
 		}
-	})
-})
+	});
+}); // end of post
 
 // app.get("/waitInference", (req, res) => {
 // 	console.log(dataFileName)
 // })
 
-// app.get("/download", (req, res) => {
-// 	res.render("download");
-// })
+app.get("/download", (req, res) => {
+	res.render("download");
+});
+
+app.get("/single", (req, res) => {
+	console.log(outputFileName);
+	res.download(outputFileName);
+});
 
 // Take any port number of your choice which
 // is not taken by any other process
 app.listen(3000, (error) => {
 	if(error) throw error
 		console.log("Server created Successfully on PORT 3000")
-})
+});
