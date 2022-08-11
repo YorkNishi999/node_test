@@ -1,8 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+</head>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<body>
 <h1> Download your results </h1>
 <form action="/single" method="get">
-    <button type="submit">Download Result</button>
+    <button type="submit">Download Result (.csv) </button>
 </form>
 
-<%= data %>
+<h2>Result tables</h2>
 
-<p>aa</p>
+<% data.forEach(function(d) { %>
+    <table>
+        <caption><%- d.attribute_label %></caption>
+        <tr>
+            <th>Point</th>
+            <th>Histogram</th>
+        </tr>
+        <% d.sentiment.forEach(function(s) { %>
+            <tr>
+                <td><%- s.name %></td>
+                <td><%- s.value %></td>
+            </tr>
+        <% }); %>
+    </table>
+<% }); %>
+
+<script>
+    // d3.js 使いたいけど全くうまく書けてない
+  // 1. データの準備
+  var dataset = `<% data %>`;
+
+//   var dataset = [
+//   { "label": "1月", "value": 87 },
+//   { "label": "2月", "value": 83 },
+//   { "label": "3月", "value": 104 },
+//   { "label": "4月", "value": 107 },
+//   { "label": "5月", "value": 112 },
+//   { "label": "6月", "value": 93 },
+//   { "label": "7月", "value": 111 },
+//   { "label": "8月", "value": 102 },
+//   { "label": "9月", "value": 99 },
+//   { "label": "10月", "value": 90 },
+//   { "label": "11月", "value": 114 },
+//   { "label": "12月", "value": 99 },
+//   ];
+//   alert("dataset: " + typeof(dataset));
+//   alert("dataset: " + dataset);
+//   alert("dataset: ");
+  var width = 400; // グラフの幅
+  var height = 300; // グラフの高さ
+  var padding = 30; // スケール表示用マージン
+  
+  // 2. SVG領域の設定
+  var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
+ 
+  // 3. 軸スケールの設定
+  var xScale = d3.scaleBand()
+    .rangeRound([padding, width - padding])
+    .padding(0.1)
+    .domain(dataset.map(function(d) { return d.name; }));
+ 
+  var yScale = d3.scaleLinear()
+    .domain([0, d3.max(dataset, function(d) { return d.value; })])
+    .range([height - padding, padding]);
+ 
+  // 4. 軸の表示
+  svg.append("g")
+    .attr("transform", "translate(" + 0 + "," + (height - padding) + ")")
+    .call(d3.axisBottom(xScale));
+ 
+  svg.append("g")
+    .attr("transform", "translate(" + padding + "," + 0 + ")")
+    .call(d3.axisLeft(yScale));
+ 
+  // 5. バーの表示
+  svg.append("g")
+    .selectAll("rect")
+    .data(dataset)
+    .enter()
+    .append("rect")
+    .attr("x", function(d) { return xScale(d.name); })
+    .attr("y", function(d) { return yScale(d.value); })
+    .attr("width", xScale.bandwidth())
+    .attr("height", function(d) { return height - padding - yScale(d.value); })
+    .attr("fill", "steelblue");
+</script>
+</body>
+</html>

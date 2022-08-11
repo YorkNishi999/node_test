@@ -88,10 +88,8 @@ app.post("/uploadCsv", (req, res, next) => {
 app.get("/download", (req, res) => {
   var text = fs.readFileSync(outputJsonFileName);
   let paramsJsonData = JSON.parse(text)
-	console.log(paramsJsonData)
   res.render("download", {
-    // data: paramsJsonData,
-    data: text,
+    data: paramsJsonData
   });
 });
 
