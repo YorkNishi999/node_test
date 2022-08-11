@@ -20,7 +20,8 @@ app.set("view engine","ejs")
 // global variables
 var dataFileName;  // name of the file to be uploaded
 var fileTime;
-var outputFileName; // file path for downloading the inference result
+var outputCsvFileName; // file path for downloading the inference result
+var outputJsonFileName; // file path for internal use the inference result
 
 var storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -76,23 +77,28 @@ app.post("/uploadCsv", (req, res, next) => {
 				// console.log(`stdout: ${stdout}`);
 				// console.log(`stderr: ${stderr}`);
 			});
-			outputFileName = __dirname + "/downloads/output" + "_" + fileTime + ".csv";
+			outputCsvFileName = __dirname + "/downloads/output_" + fileTime + ".csv";
+			outputJsonFileName = __dirname + "/downloads/output_json_" + fileTime + ".txt";
+			console.log(outputCsvFileName, outputJsonFileName)
 			res.redirect("/download");
 		}
 	});
 }); // end of post
 
-// app.get("/waitInference", (req, res) => {
-// 	console.log(dataFileName)
-// })
-
 app.get("/download", (req, res) => {
-	res.render("download");
+  var text = fs.readFileSync(outputJsonFileName);
+  let paramsJsonData = JSON.parse(text)
+	console.log(paramsJsonData)
+  res.render("download", {
+    // data: paramsJsonData,
+    data: text,
+  });
 });
 
+
 app.get("/single", (req, res) => {
-	console.log(outputFileName);
-	res.download(outputFileName);
+	console.log(outputCsvFileName);
+	res.download(outputCsvFileName);
 });
 
 // Take any port number of your choice which
