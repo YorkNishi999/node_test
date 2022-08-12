@@ -79,7 +79,7 @@ app.post("/uploadCsv", (req, res, next) => {
 			});
 			outputCsvFileName = __dirname + "/downloads/output_" + fileTime + ".csv";
 			outputJsonFileName = __dirname + "/downloads/output_json_" + fileTime + ".txt";
-			console.log(outputCsvFileName, outputJsonFileName)
+			// console.log(outputCsvFileName, outputJsonFileName) // for debugging
 			res.redirect("/download");
 		}
 	});

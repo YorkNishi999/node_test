@@ -10,12 +10,13 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 
 <body>
+
 <h1> Download your results </h1>
 <form action="/single" method="get">
     <button type="submit">Download Result (.csv) </button>
 </form>
 
-<h2>Result tables</h2>
+<!-- <h2>Result tables</h2>
 
 <% data.forEach(function(d) { %>
     <table>
@@ -31,67 +32,68 @@
             </tr>
         <% }); %>
     </table>
-<% }); %>
+<% }); %> -->
+
+<h2>Result graphs</h2>
 
 <script>
     // d3.js 使いたいけど全くうまく書けてない
   // 1. データの準備
-  var dataset = `<% data %>`;
-
-//   var dataset = [
-//   { "label": "1月", "value": 87 },
-//   { "label": "2月", "value": 83 },
-//   { "label": "3月", "value": 104 },
-//   { "label": "4月", "value": 107 },
-//   { "label": "5月", "value": 112 },
-//   { "label": "6月", "value": 93 },
-//   { "label": "7月", "value": 111 },
-//   { "label": "8月", "value": 102 },
-//   { "label": "9月", "value": 99 },
-//   { "label": "10月", "value": 90 },
-//   { "label": "11月", "value": 114 },
-//   { "label": "12月", "value": 99 },
-//   ];
-//   alert("dataset: " + typeof(dataset));
-//   alert("dataset: " + dataset);
-//   alert("dataset: ");
-  var width = 400; // グラフの幅
-  var height = 300; // グラフの高さ
-  var padding = 30; // スケール表示用マージン
-  
-  // 2. SVG領域の設定
-  var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
- 
-  // 3. 軸スケールの設定
-  var xScale = d3.scaleBand()
-    .rangeRound([padding, width - padding])
-    .padding(0.1)
-    .domain(dataset.map(function(d) { return d.name; }));
- 
-  var yScale = d3.scaleLinear()
-    .domain([0, d3.max(dataset, function(d) { return d.value; })])
-    .range([height - padding, padding]);
- 
-  // 4. 軸の表示
-  svg.append("g")
-    .attr("transform", "translate(" + 0 + "," + (height - padding) + ")")
-    .call(d3.axisBottom(xScale));
- 
-  svg.append("g")
-    .attr("transform", "translate(" + padding + "," + 0 + ")")
-    .call(d3.axisLeft(yScale));
- 
-  // 5. バーの表示
-  svg.append("g")
-    .selectAll("rect")
-    .data(dataset)
-    .enter()
-    .append("rect")
-    .attr("x", function(d) { return xScale(d.name); })
-    .attr("y", function(d) { return yScale(d.value); })
-    .attr("width", xScale.bandwidth())
-    .attr("height", function(d) { return height - padding - yScale(d.value); })
-    .attr("fill", "steelblue");
+    var dataset = '<%- JSON.stringify(data) %>'
+    dataset = JSON.parse(dataset);
+    console.log(dataset)
+    for (var data in dataset) {
+        console.log(dataset[data])
+        var attr_name = dataset[data].attribute_label;
+        sent_data = dataset[data].sentiment;
+        console.log(sent_data)
+        
+        var margin = {top: 10, right: 20, bottom: 10, left: 20}
+        var width = 400; // グラフの幅
+        var height = 300; // グラフの高さ
+        var padding = 30; // スケール表示用マージン
+        
+        // 2. SVG領域の設定
+        var svg = d3.select("body").append("svg")
+                    .attr("width", width).attr("height", height).attr("margin", margin);
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", (margin.top / 0.4))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "12px") 
+            .text(attr_name);
+        
+        // 3. 軸スケールの設定
+        var xScale = d3.scaleBand()
+            .rangeRound([padding, width - padding])
+            .padding(0.1)
+            .domain([0, 1, 2, 3, 4]);
+        
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(sent_data, function(d) { return d.value; })])
+            .range([height - padding, padding]);
+        
+        // 4. 軸の表示
+        svg.append("g")
+            .attr("transform", "translate(" + 0 + "," + (height - padding) + ")")
+            .call(d3.axisBottom(xScale));
+        
+        svg.append("g")
+            .attr("transform", "translate(" + padding + "," + 0 + ")")
+            .call(d3.axisLeft(yScale));
+        
+        // 5. バーの表示
+        svg.append("g")
+            .selectAll("rect")
+            .data(sent_data)
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return xScale(d.name); })
+            .attr("y", function(d) { return yScale(d.value); })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) { return height - padding - yScale(d.value); })
+            .attr("fill", "steelblue")
+    }; // end of for loop
 </script>
 </body>
 </html>
