@@ -92,7 +92,9 @@ def main():# attribute
     dic['attribute'] = a[0]
     dic['attribute_label'] = attr_map[a[0]]
     list = []
-    print("a[1]")
+    print("a[1]: ", a[1])
+
+    # インデックスの集合を作る
     set_index = set()
     for s in a[1]:
       print("s: ", s)
@@ -105,7 +107,10 @@ def main():# attribute
       if c in set_index:
         print("koko")
         d['name'] = str(c)
-        d['value'] = int(s[1])
+        for i in a[1]:
+          if int(i[0]) == c:
+            d['value'] = i[1]
+            break
         list.append(d)
         print("list: ", list)
       else:
