@@ -156,3 +156,4 @@ downloads/
 
 # files
 *.csv
+/simple_server/public/js/bootstrap-4.1.3/

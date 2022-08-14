@@ -17,6 +17,10 @@ const maxSize = 1 * 1000 * 1000;
 app.set("views",path.join(__dirname,"views"))
 app.set("view engine","ejs")
 
+// Set the storage engine
+app.set("public",path.join(__dirname,"public"))
+app.use(express.static("public"))
+
 // global variables
 var dataFileName;  // name of the file to be uploaded
 var fileTime;
@@ -57,7 +61,7 @@ var upload = multer({
 }).single("myinference");	
 
 app.get("/",function(req,res){
-	res.render("uploadcomp");
+	res.render("index");
 })
 
 // API to upload the file and inference
