@@ -1,99 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <style>
-        table, th, td {
-          border: 1px solid black;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Sentiment Inference for Restaurants Reviews</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link type="text/css" href="/css/dashboard.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
-<script src="https://d3js.org/d3.v5.min.js"></script>
 
 <body>
+    <div class="container">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+          <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+            <span class="fs-4">Sentiment Inference for Restaurants Reviews</span>    
+          </a>
+    
+          <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="#" class="nav-link px-2 link-secondary">Inference</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark">Tutorial</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark">Programs</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark">Authors</a></li>
+          </ul>
+        </header>
 
-<h1> Download your results </h1>
-<form action="/single" method="get">
-    <button type="submit">Download Result (.csv) </button>
-</form>
+        <h1 class="h4">Download your results</h1>
+        <form action="/single" method="get">
+            <button class="btn btn-primary my-2" type="submit">Download Result (.csv) </button>
+        </form>
 
-<!-- <h2>Result tables</h2>
+        <h2 class="h4">Result tables</h2>
 
-<% data.forEach(function(d) { %>
-    <table>
-        <caption><%- d.attribute_label %></caption>
-        <tr>
-            <th>Point</th>
-            <th>Histogram</th>
-        </tr>
-        <% d.sentiment.forEach(function(s) { %>
-            <tr>
-                <td><%- s.name %></td>
-                <td><%- s.value %></td>
-            </tr>
-        <% }); %>
-    </table>
-<% }); %> -->
+        <div class="card-wrapper">
+            <% data.forEach(function(d) { %>
+                <div class="card" style="width: 12rem;">
+                    <div class="card-body">
+                        <h5 class="card-title"><%- d.attribute_label %></h5>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Point</th>
+                                    <th scope="col">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% d.sentiment.forEach(function(s) { %>
+                                <tr>
+                                    <th scope="row"><%- s.name %></td>
+                                    <td><%- s.value %></td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
 
-<h2>Result graphs</h2>
+        <h2 class="h4">Result graphs</h2>
 
-<script>
-    // d3.js 使いたいけど全くうまく書けてない
-  // 1. データの準備
-    var dataset = '<%- JSON.stringify(data) %>'
-    dataset = JSON.parse(dataset);
-    console.log(dataset)
-    for (var data in dataset) {
-        console.log(dataset[data])
-        var attr_name = dataset[data].attribute_label;
-        sent_data = dataset[data].sentiment;
-        console.log(sent_data)
-        
-        var margin = {top: 10, right: 20, bottom: 10, left: 20}
-        var width = 400; // グラフの幅
-        var height = 300; // グラフの高さ
-        var padding = 30; // スケール表示用マージン
-        
-        // 2. SVG領域の設定
-        var svg = d3.select("body").append("svg")
-                    .attr("width", width).attr("height", height).attr("margin", margin);
-        svg.append("text")
-            .attr("x", (width / 2))             
-            .attr("y", (margin.top / 0.4))
-            .attr("text-anchor", "middle")  
-            .style("font-size", "12px") 
-            .text(attr_name);
-        
-        // 3. 軸スケールの設定
-        var xScale = d3.scaleBand()
-            .rangeRound([padding, width - padding])
-            .padding(0.1)
-            .domain([0, 1, 2, 3, 4]);
-        
-        var yScale = d3.scaleLinear()
-            .domain([0, d3.max(sent_data, function(d) { return d.value; })])
-            .range([height - padding, padding]);
-        
-        // 4. 軸の表示
-        svg.append("g")
-            .attr("transform", "translate(" + 0 + "," + (height - padding) + ")")
-            .call(d3.axisBottom(xScale));
-        
-        svg.append("g")
-            .attr("transform", "translate(" + padding + "," + 0 + ")")
-            .call(d3.axisLeft(yScale));
-        
-        // 5. バーの表示
-        svg.append("g")
-            .selectAll("rect")
-            .data(sent_data)
-            .enter()
-            .append("rect")
-            .attr("x", function(d) { return xScale(d.name); })
-            .attr("y", function(d) { return yScale(d.value); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return height - padding - yScale(d.value); })
-            .attr("fill", "steelblue")
-    }; // end of for loop
-</script>
+        <div class="svg-wrapper">
+        <script>
+        // 1. データの準備
+            var dataset = '<%- JSON.stringify(data) %>'
+            dataset = JSON.parse(dataset);
+            console.log(dataset)
+            for (var data in dataset) {
+                console.log(dataset[data])
+                var attr_name = dataset[data].attribute_label;
+                sent_data = dataset[data].sentiment;
+                console.log(sent_data)
+                
+                var margin = {top: 10, right: 20, bottom: 10, left: 20}
+                var width = 400; // グラフの幅
+                var height = 300; // グラフの高さ
+                var padding = 30; // スケール表示用マージン
+                
+                // 2. SVG領域の設定
+                var svg = d3.select(".svg-wrapper").append("svg")
+                            .attr("width", width).attr("height", height).classed("svg-container", true);
+
+                svg.append("text")
+                    .attr("x", (width / 2))
+                    .attr("y", (margin.top / 0.4))
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "14px")
+                    .text(attr_name)
+                
+                // 3. 軸スケールの設定
+                var xScale = d3.scaleBand()
+                    .rangeRound([padding, width - padding])
+                    .padding(0.1)
+                    .domain([0, 1, 2, 3, 4]);
+                
+                var yScale = d3.scaleLinear()
+                    .domain([0, d3.max(sent_data, function(d) { return d.value; })])
+                    .range([height - padding, padding]);
+                
+                // 4. 軸の表示
+                svg.append("g")
+                    .attr("transform", "translate(" + 0 + "," + (height - padding) + ")")
+                    .call(d3.axisBottom(xScale));
+                
+                svg.append("g")
+                    .attr("transform", "translate(" + padding + "," + 0 + ")")
+                    .call(d3.axisLeft(yScale));
+                
+                // 5. バーの表示
+                svg.append("g")
+                    .selectAll("rect")
+                    .data(sent_data)
+                    .enter()
+                    .append("rect")
+                    .attr("x", function(d) { return xScale(d.name); })
+                    .attr("y", function(d) { return yScale(d.value); })
+                    .attr("width", xScale.bandwidth())
+                    .attr("height", function(d) { return height - padding - yScale(d.value); })
+                    .attr("fill", "steelblue")
+            }; // end of for loop
+        </script>
+        </div>
+    </div>
 </body>
 </html>
