@@ -7,7 +7,8 @@ const http = require('http');
 const fs = require('fs');
 const app = express()
 var execSync = require('child_process').execSync;
-
+var exec = require('child_process').exec;
+var childProcess;
 
 // Define the maximum size for uploading
 // picture i.e. 1 MB. it is optional
@@ -74,7 +75,7 @@ app.post("/uploadCsv", (req, res, next) => {
 			console.log(dataFileName);
 			dataFileName = String("./uploads/") + dataFileName;
 			// run node python.js
-			execSync(String("node python.js ") + dataFileName, (error, stdout, stderr) => {
+			childProcess = execSync(String("node python.js ") + dataFileName, (error, stdout, stderr) => { // TODO: Time out for python.js
 				if (error) {
 					console.log(`exec error: ${error}`);
 				}
@@ -97,6 +98,17 @@ app.get("/download", (req, res) => {
   });
 });
 
+// プロセス切りたいけど、これではワークしない
+app.get("/killInference", (req, res) => {
+	console.log("in killInference", childProcess);
+	var killProcess = exec(String("kill -9 ") + childProcess.pid);
+		if (error) {
+			console.log(`exec error: ${error}`);
+		}
+		// console.log(`stdout: ${stdout}`);
+		// console.log(`stderr: ${stderr}`);
+	res.redirect("/");
+});
 
 app.get("/single", (req, res) => {
 	console.log(outputCsvFileName);
