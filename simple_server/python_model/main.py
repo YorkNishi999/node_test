@@ -93,12 +93,27 @@ def main():# attribute
     dic['attribute_label'] = attr_map[a[0]]
     list = []
     print("a[1]")
+    set_index = set()
     for s in a[1]:
       print("s: ", s)
+      set_index.add(int(s[0]))
+
+    print("set_index: ", set_index)
+    for c in range(5):
       d = {}
-      d['name'] = str(s[0])
-      d['value'] = int(s[1])
-      list.append(d)
+      print("c: ", c)
+      if c in set_index:
+        print("koko")
+        d['name'] = str(c)
+        d['value'] = int(s[1])
+        list.append(d)
+        print("list: ", list)
+      else:
+        d['name'] = str(c)
+        d['value'] = 0
+        list.append(d)
+        print("list: ", list)
+
     dic['sentiment'] = list
     output_data.append(dic)
 
