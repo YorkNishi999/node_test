@@ -15,4 +15,4 @@ nodemon main
 
 ### debug for python code
 cd ./python_model
-python ./main.py /home/yohei/project/node_test/simple_server/python_model/data/interim/inference_data.csv
+python ./main.py /home/yohei/project/node_test/simple_server/python_model/data/interim/inference_data_min.csv

@@ -148,7 +148,9 @@ About
 You have no unread notifications
 
 # python model
-python_model/
+/simple_server/python_model/models
+/simple_server/python_model/data
+
 
 # uplpad/download
 uploads/
