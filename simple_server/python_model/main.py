@@ -16,6 +16,11 @@ attr_map = {
 }
 
 def main():# attribute
+  # set device
+  # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+  device = torch.device("cpu")
+  print("Device:", device)
+
   #0. settings
   max_length = 128
   # data_path = './data/interim/inference_data.txt'
@@ -42,11 +47,11 @@ def main():# attribute
       padding='max_length',
       truncation=True,
   )
-  encoding = { k: torch.tensor(v) for k, v in encoding.items() }
+  encoding = { k: torch.tensor(v).to(device) for k, v in encoding.items() }
 
   #2. load model
-  bert_sc_attr = BertForSequenceClassification.from_pretrained(attr_model_path)
-  bert_sc_sent = BertForSequenceClassification.from_pretrained(sent_model_path)
+  bert_sc_attr = BertForSequenceClassification.from_pretrained(attr_model_path).to(device)
+  bert_sc_sent = BertForSequenceClassification.from_pretrained(sent_model_path).to(device)
 
   #3. inference for attribute
   with torch.no_grad():

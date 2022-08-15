@@ -91,7 +91,12 @@ app.post("/uploadCsv", (req, res, next) => {
 }); // end of post
 
 app.get("/download", (req, res) => {
-  var text = fs.readFileSync(outputJsonFileName);
+	try {
+		var text = fs.readFileSync(outputJsonFileName);
+	} catch (err) {
+		console.log(err);
+		res.render("fileerror");
+	}
   let paramsJsonData = JSON.parse(text)
   res.render("download", {
     data: paramsJsonData
@@ -108,6 +113,10 @@ app.get("/killInference", (req, res) => {
 		// console.log(`stdout: ${stdout}`);
 		// console.log(`stderr: ${stderr}`);
 	res.redirect("/");
+});
+
+app.get("/fileerror", (req, res) => {
+	res.render("fileerror");
 });
 
 app.get("/single", (req, res) => {
